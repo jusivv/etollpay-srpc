@@ -1,0 +1,9 @@
+{
+  "mode": "CREATE_BIZ_FILE", // MESSAGE_REQUEST, NOTIFY_REQUEST
+  "targetUrl": "http://localhost:8080/message/v1.1",
+  "sender": "etollpay",
+  "apiName": "dryRun",
+  "secretKeyBase64": "ZXRvbGxwYXkuc2VjcmV0S2V5",
+  "encryptionTag": "PGP",
+  "recipient": "etcchina"
+}
