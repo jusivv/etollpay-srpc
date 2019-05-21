@@ -22,7 +22,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
   <context:annotation-config></context:annotation-config>
-  <bean class="com.etollpay.srpc.service.component.SpringContextHolder"/>
+  <bean class="com.etollpay.srpc.tool.component.SpringContextHolder"/>
 <!--  <context:property-placeholder location="classpath:db.properties" ignore-unresolvable="true"/>-->
 <!--  <import resource="classpath:springDataJpa.xml"/>-->
 </beans>

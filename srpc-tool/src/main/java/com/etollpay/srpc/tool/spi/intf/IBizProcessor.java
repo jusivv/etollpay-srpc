@@ -1,7 +1,5 @@
-package com.etollpay.srpc.service.processor;
+package com.etollpay.srpc.tool.spi.intf;
 
-
-import com.etollpay.srpc.tool.spi.intf.IProviderSelector;
 
 import java.io.OutputStream;
 import java.nio.file.Path;

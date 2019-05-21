@@ -1,4 +1,4 @@
-package com.etollpay.srpc.service.util;
+package com.etollpay.srpc.tool;
 
 
 import com.etollpay.srpc.standard.basic.IntfError;

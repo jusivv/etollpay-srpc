@@ -1,4 +1,4 @@
-package com.etollpay.srpc.service.component;
+package com.etollpay.srpc.tool.component;
 
 import com.etollpay.srpc.standard.basic.Metadata;
 

@@ -1,17 +1,15 @@
 package com.etollpay.srpc.service.processor;
 
-import com.etollpay.srpc.service.component.SpringContextHolder;
-import com.etollpay.srpc.service.tool.BizRunnerExecutor;
+import com.etollpay.srpc.message.provider.AbstractMessageBizProcessor;
 import com.etollpay.srpc.service.servlet.IAsyncResponseInvoker;
-import com.etollpay.srpc.service.util.Assert;
+import com.etollpay.srpc.service.tool.BizRunnerExecutor;
 import com.etollpay.srpc.service.util.FilePath;
-import com.etollpay.srpc.service.util.ServiceException;
-import com.etollpay.srpc.service.util.SysConfig;
 import com.etollpay.srpc.standard.basic.IntfError;
 import com.etollpay.srpc.standard.basic.Metadata;
-import com.etollpay.srpc.tool.Common;
-import com.etollpay.srpc.tool.OutputStreamWithHash;
+import com.etollpay.srpc.tool.*;
+import com.etollpay.srpc.tool.component.SpringContextHolder;
 import com.etollpay.srpc.tool.spi.ServiceHelper;
+import com.etollpay.srpc.tool.spi.intf.IBizProcessor;
 import com.etollpay.srpc.tool.spi.intf.IEncryptor;
 import com.etollpay.srpc.tool.standard.MetadataHelper;
 import org.bouncycastle.util.io.Streams;
@@ -99,8 +97,8 @@ public class ProcessorExecutor {
                 if (transactionManager != null) {
                     transactionManager.commit(transactionStatus);
                 }
-                if (bizProcessor instanceof AbstractBizProcessor) {
-                    ((AbstractBizProcessor) bizProcessor).doPublish();
+                if (bizProcessor instanceof AbstractMessageBizProcessor) {
+                    ((AbstractMessageBizProcessor) bizProcessor).doPublish();
                 }
             } catch (Throwable t) {
                 log.error(t.getLocalizedMessage(), t);

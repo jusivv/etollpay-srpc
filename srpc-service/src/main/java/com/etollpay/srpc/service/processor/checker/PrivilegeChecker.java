@@ -1,12 +1,12 @@
 package com.etollpay.srpc.service.processor.checker;
 
 import com.etollpay.srpc.service.processor.IPreProcessor;
-import com.etollpay.srpc.service.util.Assert;
-import com.etollpay.srpc.service.util.ServiceException;
-import com.etollpay.srpc.service.util.SysConfig;
 import com.etollpay.srpc.standard.basic.IntfError;
 import com.etollpay.srpc.standard.basic.Metadata;
+import com.etollpay.srpc.tool.Assert;
 import com.etollpay.srpc.tool.Common;
+import com.etollpay.srpc.tool.ServiceException;
+import com.etollpay.srpc.tool.SysConfig;
 
 import javax.servlet.http.HttpServletRequest;
 

@@ -1,7 +1,7 @@
 package com.etollpay.srpc.service.tool;
 
-import com.etollpay.srpc.service.util.SysConfig;
 import com.etollpay.srpc.standard.basic.Metadata;
+import com.etollpay.srpc.tool.SysConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

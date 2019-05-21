@@ -1,12 +1,12 @@
 package com.etollpay.srpc.service.processor.biz;
 
 import com.alibaba.fastjson.JSON;
-import com.etollpay.srpc.service.processor.AbstractBizProcessor;
+import com.etollpay.srpc.message.provider.AbstractMessageBizProcessor;
 import com.etollpay.srpc.service.util.BizException;
-import com.etollpay.srpc.service.util.ServiceException;
 import com.etollpay.srpc.standard.basic.IntfError;
 import com.etollpay.srpc.standard.basic.IntfList;
 import com.etollpay.srpc.standard.basic.Metadata;
+import com.etollpay.srpc.tool.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class DryRunProcessor extends AbstractBizProcessor {
+public class DryRunProcessor extends AbstractMessageBizProcessor {
     private static Logger log = LoggerFactory.getLogger(DryRunProcessor.class);
 
     private static final int RUN_MODEL_CACHE = 1;

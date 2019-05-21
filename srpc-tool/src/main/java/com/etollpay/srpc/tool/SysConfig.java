@@ -1,4 +1,4 @@
-package com.etollpay.srpc.service.util;
+package com.etollpay.srpc.tool;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;

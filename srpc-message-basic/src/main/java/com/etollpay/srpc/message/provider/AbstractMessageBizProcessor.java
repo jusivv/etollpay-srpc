@@ -1,41 +1,21 @@
-package com.etollpay.srpc.service.processor;
+package com.etollpay.srpc.message.provider;
 
 import com.etollpay.srpc.message.basic.IEtcMessagePublisher;
-import com.etollpay.srpc.service.component.SpringContextHolder;
-import com.etollpay.srpc.service.util.ServiceException;
-import com.etollpay.srpc.service.util.SysConfig;
+import com.etollpay.srpc.tool.SysConfig;
+import com.etollpay.srpc.tool.component.SpringContextHolder;
+import com.etollpay.srpc.tool.spi.provider.AbstractBizProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.OutputStream;
-import java.nio.file.Path;
 import java.util.*;
 
-public abstract class AbstractBizProcessor implements IBizProcessor {
-    private static Logger log = LoggerFactory.getLogger(AbstractBizProcessor.class);
+public abstract class AbstractMessageBizProcessor extends AbstractBizProcessor {
+    private static Logger log = LoggerFactory.getLogger(AbstractMessageBizProcessor.class);
 
     private Map<String, List<String>> messages;
 
-    public AbstractBizProcessor() {
+    public AbstractMessageBizProcessor() {
         messages = new HashMap<String, List<String>>();
-    }
-
-    @Override
-    public String processRequest(Path workspace, Path bizFilePath,
-                               String sender, OutputStream resOutput) throws Exception {
-        throw new ServiceException("no request processor", 500);
-    }
-
-    @Override
-    public String processResponse(Path workspace, Path bizFilePath,
-                                  String sender, OutputStream resOutput) throws Exception {
-        throw new ServiceException("no response processor", 500);
-    }
-
-    @Override
-    public String processError(Path workspace, Path bizFilePath,
-                             String sender, OutputStream resOutput) throws Exception {
-        throw new ServiceException("no error processor", 500);
     }
 
     protected void publish(String  event, String... ids) {

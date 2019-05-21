@@ -1,4 +1,4 @@
-package com.etollpay.srpc.service.util;
+package com.etollpay.srpc.tool.component;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
