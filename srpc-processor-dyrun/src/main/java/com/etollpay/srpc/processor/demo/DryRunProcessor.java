@@ -1,12 +1,11 @@
-package com.etollpay.srpc.service.processor.biz;
+package com.etollpay.srpc.processor.demo;
 
 import com.alibaba.fastjson.JSON;
-import com.etollpay.srpc.message.provider.AbstractMessageBizProcessor;
-import com.etollpay.srpc.service.util.BizException;
 import com.etollpay.srpc.standard.basic.IntfError;
 import com.etollpay.srpc.standard.basic.IntfList;
 import com.etollpay.srpc.standard.basic.Metadata;
 import com.etollpay.srpc.tool.ServiceException;
+import com.etollpay.srpc.tool.spi.provider.AbstractBizProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +16,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class DryRunProcessor extends AbstractMessageBizProcessor {
+public class DryRunProcessor extends AbstractBizProcessor {
     private static Logger log = LoggerFactory.getLogger(DryRunProcessor.class);
 
     private static final int RUN_MODEL_CACHE = 1;
@@ -59,7 +58,7 @@ public class DryRunProcessor extends AbstractMessageBizProcessor {
 
     @Override
     public String processRequest(Path workspace, Path bizFilePath, String sender, OutputStream resOutput)
-            throws BizException {
+            throws ServiceException {
         log.debug("Metadata: {}", metadata == null ? "null" : JSON.toJSONString(metadata));
         if (bizFilePath != null) {
             try {

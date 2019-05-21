@@ -51,6 +51,12 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-jpa</artifactId>
         </dependency>
+        <!--    Processor Demo    -->
+        <dependency>
+            <groupId>com.etollpay</groupId>
+            <artifactId>srpc-processor-dyrun</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
