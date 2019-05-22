@@ -1,2 +1,3 @@
+com.etollpay.srpc.service.processor.checker.MetadataChecker
 com.etollpay.srpc.service.processor.checker.PrivilegeChecker
 com.etollpay.srpc.service.processor.checker.MacChecker
