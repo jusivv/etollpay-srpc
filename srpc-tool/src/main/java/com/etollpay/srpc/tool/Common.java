@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.PosixFilePermission;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -475,8 +476,19 @@ public class Common {
 
     }
 
-    public static void main(String[] args){
-        System.out.println(getBatchNo(1545162400000L));
+    public static void setPermission(Path path, PosixFilePermission... permissions) throws IOException {
+        if (Files.exists(path)) {
+            Set<PosixFilePermission> set = new HashSet<>();
+            for (PosixFilePermission permission : permissions) {
+                set.add(permission);
+            }
+            try {
+
+                Files.setPosixFilePermissions(path, set);
+            } catch (UnsupportedOperationException e) {
+                log.warn(e.getLocalizedMessage(), e);
+            }
+        }
     }
 
 

@@ -20,6 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.PosixFilePermission;
 
 public class NotifyResponseBuilder implements IResponseBuilder {
     private static Logger log = LoggerFactory.getLogger(NotifyResponseBuilder.class);
@@ -37,8 +38,19 @@ public class NotifyResponseBuilder implements IResponseBuilder {
             String bizFileName = MetadataHelper.getBizFileName(resMetadata);
             Path resArchivePath = Paths.get(FilePath.getOutboundPath(resMetadata), bizFileName);
             Assert.is(!Files.exists(resArchivePath), IntfError.LOST_BIZ_FILE, bizFileName);
-            Files.copy(resArchivePath, Paths.get(FilePath.getFtpOutboundPath(resMetadata, true), bizFileName),
+            Path targetPath = Files.copy(resArchivePath, Paths.get(FilePath.getFtpOutboundPath(resMetadata, true), bizFileName),
                     StandardCopyOption.COPY_ATTRIBUTES, StandardCopyOption.REPLACE_EXISTING);
+            // set file permission
+            Common.setPermission(
+                    targetPath,
+                    PosixFilePermission.OWNER_READ,
+                    PosixFilePermission.OWNER_WRITE,
+                    PosixFilePermission.OWNER_EXECUTE,
+                    PosixFilePermission.GROUP_READ,
+                    PosixFilePermission.GROUP_EXECUTE,
+                    PosixFilePermission.OTHERS_READ,
+                    PosixFilePermission.OTHERS_EXECUTE
+            );
         }
         // response metadata
         response.setContentType("application/json; charset=utf-8");
