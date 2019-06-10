@@ -8,6 +8,7 @@ import com.etollpay.srpc.tool.Common;
 import com.etollpay.srpc.tool.ServiceException;
 import com.etollpay.srpc.tool.SysConfig;
 import com.etollpay.srpc.tool.standard.MetadataHelper;
+import org.apache.commons.compress.utils.IOUtils;
 import org.bouncycastle.util.io.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,14 +34,13 @@ public class MessageResponseBuilder implements IResponseBuilder {
                     Paths.get(FilePath.getOutboundPath(resMetadata),
                             MetadataHelper.getBizFileName(resMetadata));
             if (Files.exists(resArchivePath)) {
-                InputStream inputStream = new BufferedInputStream(Files.newInputStream(resArchivePath),
-                        8 * 1024);
+                InputStream fis = Files.newInputStream(resArchivePath);
+                InputStream inputStream = new BufferedInputStream(fis,8 * 1024);
                 try {
                     Streams.pipeAll(inputStream, response.getOutputStream());
                 } finally {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
+                    IOUtils.closeQuietly(inputStream);
+                    IOUtils.closeQuietly(fis);
                 }
             }
         } else {

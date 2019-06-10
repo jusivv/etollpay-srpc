@@ -16,6 +16,7 @@ import com.etollpay.srpc.tool.component.SpringContextHolder;
 import com.etollpay.srpc.tool.spi.ServiceHelper;
 import com.etollpay.srpc.tool.spi.intf.IEncryptor;
 import com.etollpay.srpc.tool.standard.MetadataHelper;
+import org.apache.commons.compress.utils.IOUtils;
 import org.bouncycastle.util.io.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,10 +71,12 @@ public class BizRunner implements Runnable {
                     metadata.getFileEncryption() != null ? metadata.getFileEncryption() : MetadataHelper.getDefaultEncryption(),
                     IEncryptor.class);
             Assert.is(encryptor == null, IntfError.BIZPROCESSOR_NOT_FOUND, metadata.getFileEncryption());
+            InputStream fis = null;
             try {
-                InputStream inputStream = Files.newInputStream(archivePath);
+                fis = Files.newInputStream(archivePath);
+                InputStream inputStream = fis;
                 if (hashAlgorithm != null) {
-                    inputStream = new InputStreamWithHash(inputStream, hashAlgorithm);
+                    inputStream = new InputStreamWithHash(fis, hashAlgorithm);
                 }
                 BufferedInputStream bufferedInputStream = new BufferedInputStream(
                         encryptor.getDecryptStream(inputStream, metadata.getRecipient(),
@@ -87,12 +90,8 @@ public class BizRunner implements Runnable {
                         return ((InputStreamWithHash) inputStream).getHashCode();
                     }
                 } finally {
-                    if (bufferedInputStream != null) {
-                        bufferedInputStream.close();
-                    }
-                    if (bufferedOutputStream != null) {
-                        bufferedOutputStream.close();
-                    }
+                    IOUtils.closeQuietly(bufferedInputStream);
+                    IOUtils.closeQuietly(bufferedOutputStream);
                 }
             } catch (IOException e) {
                 log.error(e.getLocalizedMessage(), e);
@@ -100,6 +99,8 @@ public class BizRunner implements Runnable {
             } catch (NoSuchAlgorithmException e) {
                 log.error(e.getLocalizedMessage(), e);
                 throw new ServiceException(e, IntfError.INTERNAL_ERROR, e.getLocalizedMessage());
+            } finally {
+                IOUtils.closeQuietly(fis);
             }
         }
         return null;

@@ -116,7 +116,12 @@ public class BizDataBuilder {
             } else if (otherFiles.containsKey(fileName)) {
                 // Other File
                 Path path = otherFiles.get(fileName);
-                Common.copyStream(Common.createInputStream(path), outputStream);
+                InputStream fis = Common.createInputStream(path);
+                try {
+                    Common.copyStream(fis, outputStream);
+                } finally {
+                    IOUtils.closeQuietly(fis);
+                }
             }
         } else {
             // multi file
@@ -166,16 +171,18 @@ public class BizDataBuilder {
                             log.debug("found file: {}", file.getName());
                             ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(file, file.getName());
                             zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
-                            IOUtils.copy(Common.createInputStream(path), zipArchiveOutputStream);
-                            zipArchiveOutputStream.closeArchiveEntry();
+                            InputStream fis = Common.createInputStream(path);
+                            try {
+                                IOUtils.copy(fis, zipArchiveOutputStream);
+                            } finally {
+                                zipArchiveOutputStream.closeArchiveEntry();
+                                IOUtils.closeQuietly(fis);
+                            }
                         }
                     }
                 }
             } finally {
-                if (zipArchiveOutputStream != null) {
-                    zipArchiveOutputStream.flush();
-                    zipArchiveOutputStream.close();
-                }
+                IOUtils.closeQuietly(zipArchiveOutputStream);
             }
         }
     }

@@ -7,6 +7,7 @@ import com.etollpay.srpc.tool.Assert;
 import com.etollpay.srpc.tool.Common;
 import com.etollpay.srpc.tool.ServiceException;
 import com.etollpay.srpc.tool.standard.MetadataHelper;
+import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,15 +42,15 @@ public class MessageBizFileReader implements IBizFileReader {
             try {
                 Collection<Part> parts = request.getParts();
                 if (parts != null && parts.iterator().hasNext()) {
+                    OutputStream outputStream = Files.newOutputStream(archivePath);
                     BufferedOutputStream archiveOutput = new BufferedOutputStream(
-                            Files.newOutputStream(archivePath), 8 * 1024);
+                            outputStream, 8 * 1024);
                     try {
                         return Common.copyStreamWithHashCode(parts.iterator().next().getInputStream(), hashAlgorithm,
                                 archiveOutput);
                     } finally {
-                        if (archiveOutput != null) {
-                            archiveOutput.close();
-                        }
+                        IOUtils.closeQuietly(archiveOutput);
+                        IOUtils.closeQuietly(outputStream);
                     }
                 }
             } catch (IOException e) {
