@@ -12,6 +12,7 @@ import com.etollpay.srpc.tool.spi.ServiceHelper;
 import com.etollpay.srpc.tool.spi.intf.IBizProcessor;
 import com.etollpay.srpc.tool.spi.intf.IEncryptor;
 import com.etollpay.srpc.tool.standard.MetadataHelper;
+import org.apache.commons.compress.utils.IOUtils;
 import org.bouncycastle.util.io.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -128,24 +129,32 @@ public class ProcessorExecutor {
                     Assert.is(encryptor == null, IntfError.UNSUPPORT_ENCRYPTION, resMetadata.getApiName());
                 }
                 try {
-                    InputStream resInput = resOutput.size() > 0 ?
-                            new ByteArrayInputStream(resOutput.toByteArray()) :
-                            new BufferedInputStream(Files.newInputStream(Paths.get(resPath)), 8 * 1024);
-                    Path resArchivePath = Paths.get(FilePath.getOutboundPath(resMetadata, true),
-                            MetadataHelper.getBizFileName(resMetadata));
-
-                    OutputStreamWithHash outputStreamWithHash = new OutputStreamWithHash(
-                            new BufferedOutputStream(Files.newOutputStream(resArchivePath), 8 * 1024),
-                            "MD5");
-                    OutputStream outputStream = encryptor.getEncryptStream(outputStreamWithHash,
-                            resMetadata.getRecipient(), resMetadata.getSender());
+                    OutputStream fos = null;
+                    InputStream is = resOutput.size() > 0 ? new ByteArrayInputStream(resOutput.toByteArray()) :
+                            Files.newInputStream(Paths.get(resPath));
                     try {
-                        Streams.pipeAll(resInput, outputStream);
+                        InputStream resInput = is instanceof ByteArrayInputStream ? is :
+                                new BufferedInputStream(is, 8 * 1024);
+
+                        Path resArchivePath = Paths.get(FilePath.getOutboundPath(resMetadata, true),
+                                MetadataHelper.getBizFileName(resMetadata));
+
+                        fos = Files.newOutputStream(resArchivePath);
+                        OutputStreamWithHash outputStreamWithHash = new OutputStreamWithHash(
+                                new BufferedOutputStream(fos, 8 * 1024),
+                                "MD5");
+                        OutputStream outputStream = encryptor.getEncryptStream(outputStreamWithHash,
+                                resMetadata.getRecipient(), resMetadata.getSender());
+                        try {
+                            Streams.pipeAll(resInput, outputStream);
+                        } finally {
+                            IOUtils.closeQuietly(outputStream);
+                        }
+                        resMetadata.setFileHashCode(outputStreamWithHash.getHashCode());
                     } finally {
-                        outputStream.close();
-                        resInput.close();
+                        IOUtils.closeQuietly(fos);
+                        IOUtils.closeQuietly(is);
                     }
-                    resMetadata.setFileHashCode(outputStreamWithHash.getHashCode());
                 } catch (IOException e) {
                     log.error(e.getLocalizedMessage(), e);
                     throw new ServiceException(e, IntfError.INTERNAL_ERROR, e.getLocalizedMessage());

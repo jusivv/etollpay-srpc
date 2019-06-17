@@ -139,9 +139,9 @@ public class Common {
      * @throws IOException
      */
     public static void compress(String directory, String target, String... sources) throws IOException {
-        OutputStream targetStream = new BufferedOutputStream(Files.newOutputStream(Paths.get(directory, target)),
-                8 *1024);
-        ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(targetStream);
+        OutputStream targetStream = Files.newOutputStream(Paths.get(directory, target));
+        ZipArchiveOutputStream zipArchiveOutputStream = new ZipArchiveOutputStream(new BufferedOutputStream(targetStream,
+                8 *1024));
         try {
             for (int i = 0; i < sources.length; i++) {
                 Path path = Paths.get(directory, sources[i]);
@@ -161,10 +161,8 @@ public class Common {
                 }
             }
         } finally {
-            if (zipArchiveOutputStream != null) {
-                zipArchiveOutputStream.flush();
-                zipArchiveOutputStream.close();
-            }
+            IOUtils.closeQuietly(zipArchiveOutputStream);
+            IOUtils.closeQuietly(targetStream);
         }
     }
 

@@ -26,7 +26,7 @@ public class BizDataBuilder {
     /**
      * JSON文件内容集合
      */
-    private Map<String, String> jsonFiles;
+    private Map<String, Object> jsonFiles;
     /**
      * CSV文件内容集合
      */
@@ -38,7 +38,7 @@ public class BizDataBuilder {
 
     public BizDataBuilder() {
         allFileNames = new HashSet<String>();
-        jsonFiles = new HashMap<String, String>();
+        jsonFiles = new HashMap<String, Object>();
         csvFiles = new HashMap<String, List<ICsvBean>>();
         otherFiles = new HashMap<String, Path>();
     }
@@ -46,7 +46,7 @@ public class BizDataBuilder {
 
     public void addJson(String fileName, Object bean) {
         if (allFileNames.add(fileName)) {
-            jsonFiles.put(fileName, JSON.toJSONString(bean));
+            jsonFiles.put(fileName, bean);
         } else {
             throw new RuntimeException("duplicate file name " + fileName);
         }
@@ -96,7 +96,8 @@ public class BizDataBuilder {
             String extName = fileName.substring(fileName.lastIndexOf('.') + 1);
             if (extName.equalsIgnoreCase("JSON") && jsonFiles.containsKey(fileName)) {
                 // JSON File
-                String jsonString = jsonFiles.get(fileName);
+                Object jsonBean = jsonFiles.get(fileName);
+                String jsonString = jsonBean != null ? JSON.toJSONString(jsonBean) : null;
                 if (jsonString != null) {
                     outputStream.write(jsonString.getBytes(Charset.forName("UTF-8")));
                     outputStream.flush();
@@ -116,11 +117,14 @@ public class BizDataBuilder {
             } else if (otherFiles.containsKey(fileName)) {
                 // Other File
                 Path path = otherFiles.get(fileName);
-                InputStream fis = Common.createInputStream(path);
-                try {
-                    Common.copyStream(fis, outputStream);
-                } finally {
-                    IOUtils.closeQuietly(fis);
+                if (Files.exists(path) && !Files.isDirectory(path)) {
+                    InputStream fis = Common.createInputStream(path);
+                    try {
+                        Common.copyStream(fis, outputStream);
+                        outputStream.flush();
+                    } finally {
+                        IOUtils.closeQuietly(fis);
+                    }
                 }
             }
         } else {
@@ -131,7 +135,8 @@ public class BizDataBuilder {
                     for (Iterator<String> it = jsonFiles.keySet().iterator(); it.hasNext(); ) {
                         String fileName = it.next();
                         log.debug("found file: {}", fileName);
-                        String jsonString = jsonFiles.get(fileName);
+                        Object jsonBean = jsonFiles.get(fileName);
+                        String jsonString = jsonBean != null ? JSON.toJSONString(jsonBean) : null;
                         if (jsonString != null) {
                             ZipArchiveEntry zipArchiveEntry = new ZipArchiveEntry(fileName);
                             zipArchiveOutputStream.putArchiveEntry(zipArchiveEntry);
